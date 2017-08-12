@@ -3,6 +3,7 @@ import React from 'react';
 import { StackNavigator } from 'react-navigation';
 
 import LoginScreen from '../screens/LoginScreen';
+import QRCodeScanScreen from '../screens/QRCodeScanScreen';
 import MainTabNavigator from './MainTabNavigator';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
@@ -10,6 +11,7 @@ const RootStackNavigator = StackNavigator(
   {
     Login: { screen: LoginScreen },
     Main: { screen: MainTabNavigator },
+    QRScan: { screen: QRCodeScanScreen },
   },
   {
     navigationOptions: () => ({
