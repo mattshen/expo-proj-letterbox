@@ -4,6 +4,8 @@ import { Constants, BarCodeScanner, Permissions } from 'expo';
 import { NavigationActions } from 'react-navigation';
 import { Button } from 'react-native-elements'
 
+import apis from '../api/apis';
+
 export default class QRCodeScanScreen extends Component {
 
   static navigationOptions = {
@@ -22,7 +24,7 @@ export default class QRCodeScanScreen extends Component {
   _goBack = () => {
     this.props.navigation.dispatch(
       NavigationActions.back({
-        params: { title: 'Hello' },
+        params: {},
         routeName: 'Main'
       })
     );
@@ -38,23 +40,61 @@ export default class QRCodeScanScreen extends Component {
 
   _confirmScan = (data) => {
     console.log('confirmed scan', data)
-    this._goBack();
+
+    apis.eventRegistrations.registerEvent(1, data.eventId) //hardcode user id to 1
+      .then(res => {
+        if (res.success) {
+          this._goBack();
+        } else {
+          Alert.alert('Registration Failed, try again!');
+        }
+      })   
   };
 
-  _handleBarCodeRead = data => {
+  _handleBarCodeRead = qrcode => {
     this.setState({
       ...this.state,
       allowScan: false,
     });
-    Alert.alert(
-      'Confirmation',
-      'Do you want to join event xyz? ',
-      [
-        {text: 'Cancel', onPress: () => this._goBack(), style: 'cancel'},
-        {text: 'OK', onPress: () => this._confirmScan(data)},
-      ],
-      { cancelable: false }
-    )
+
+    const data = JSON.parse(qrcode.data);
+    console.log('data', data,);
+
+    if (data && data.eventId) {
+        apis.events.getEventDetails(data.eventId).then(res => {
+          if (res.success) {
+            const event = res.results[0];
+            Alert.alert(
+              'Confirmation',
+              `Do you want to join ${event.title}`,
+              [
+                {text: 'Cancel', onPress: () => this._goBack(), style: 'cancel'},
+                {text: 'OK', onPress: () => this._confirmScan(data)}
+              ],
+              { cancelable: false }
+            );
+          } else {
+            Alert.alert(
+              'Error',
+              'Invalid Event',
+              [
+                {text: 'OK', onPress: () => this._goBack(), style: 'cancel'}
+              ],
+              { cancelable: false }
+            );
+          }
+        });
+    } else {
+      Alert.alert(
+        'Error',
+        'Invalid QR Code',
+        [
+          {text: 'OK', onPress: () => this._goBack(), style: 'cancel'}
+        ],
+        { cancelable: false }
+      );
+    }
+
   };
 
   render() {

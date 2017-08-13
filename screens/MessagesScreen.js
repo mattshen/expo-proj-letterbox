@@ -7,11 +7,12 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert
 } from 'react-native';
 import { WebBrowser } from 'expo';
 import { Card, ListItem, Button } from 'react-native-elements';
 
-import messagesAPI from '../api/messages';
+import apis from '../api/apis';
 import { MonoText } from '../components/StyledText';
 
 export default class MessagesScreen extends React.Component {
@@ -25,12 +26,14 @@ export default class MessagesScreen extends React.Component {
 
   componentDidMount () {
 
-    messagesAPI.findAllMessages().then(res => {
+    apis.messages.findAllMessages().then(res => {
       if (res.success) {
         this.setState({
           ...this.state,
           msgs: res.results,
         })
+      } else {
+        Alert.alert('Something went wrong!');
       }
     });
 

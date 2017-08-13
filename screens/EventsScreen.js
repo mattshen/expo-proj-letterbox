@@ -1,13 +1,32 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { Card, ListItem, Button } from 'react-native-elements'
+
+import apis from '../api/apis';
 
 export default class EventsScreen extends React.Component {
   static navigationOptions = {
     title: 'Events',
   };
 
+  state = {
+    registrations: [],
+  };
+
+  componentDidMount () {
+    apis.eventRegistrations.findAllRegistrations().then(res => {
+      if (res.success) {
+        this.setState({
+          ...this.state,
+          registrations: res.results,
+        })
+      } else {
+        Alert.alert('Something went wrong!');
+      }
+    });
+  }
+  
   _navToQRScan = () => {
     this.props.navigation.navigate('QRScan');
   }
@@ -22,32 +41,19 @@ export default class EventsScreen extends React.Component {
           onPress={this._navToQRScan}
         />
         <ScrollView style={styles.container}>
-            <Card
-              title='Coles Catalogue Event | [ REGISTERED ]' titleStyle={{color: '#2e78b7'}}>
-              <Text style={{marginBottom: 10}}>
-                QR Code Event. Expires on 31/8/2017.
-              </Text>
-            </Card>
 
-            <Card
-              title='ALDI Catalogue Event | [ NOT WON] ' titleStyle={{color: '#2e78b7'}}>
-              <Text style={{marginBottom: 10}}>
-                QR Code Event. Expired.
-              </Text>
-            </Card>
+            {this.state.registrations.map((reg, i) => {
+              const title = `${reg.title} | ${reg.status}`;
+              return (
+                <Card key={reg.id}
+                  title={title} titleStyle={{color: '#2e78b7'}}>
+                  <Text style={{marginBottom: 10}}>
+                    QR Code Event. Expires on {reg.expiration}.
+                  </Text>
+                </Card>
+              );
+            })}
 
-            <Card
-              title='ALDI Catalogue Event | [ WON ]' titleStyle={{color: '#2e78b7'}}>
-              <Text style={{marginBottom: 10}}>
-                QR Event. Expired
-              </Text>
-              <TouchableOpacity
-                onPress={this._handleHelpPress}>
-                <Text style={{fontSize: 14, color: '#2e78b7'}}>
-                  View Details
-                </Text>
-              </TouchableOpacity>
-            </Card>
         </ScrollView>
       </View>
     );

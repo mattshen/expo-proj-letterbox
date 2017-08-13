@@ -1,5 +1,5 @@
-import config from './config';
-import apiUtils from './apiUtils';
+import config from '../config';
+import apiUtils from '../apiUtils';
 
 const findAllMessages = (userId) => {
   const header = {
