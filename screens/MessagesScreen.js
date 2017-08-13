@@ -9,15 +9,32 @@ import {
   View,
 } from 'react-native';
 import { WebBrowser } from 'expo';
-import { Card, ListItem, Button } from 'react-native-elements'
+import { Card, ListItem, Button } from 'react-native-elements';
 
+import messagesAPI from '../api/messages';
 import { MonoText } from '../components/StyledText';
-
 
 export default class MessagesScreen extends React.Component {
   static navigationOptions = {
     title: 'Messages',
   };
+
+  state = {
+    msgs: [],
+  };
+
+  componentDidMount () {
+
+    messagesAPI.findAllMessages().then(res => {
+      if (res.success) {
+        this.setState({
+          ...this.state,
+          msgs: res.results,
+        })
+      }
+    });
+
+  }
 
   render() {
     return (
@@ -25,49 +42,18 @@ export default class MessagesScreen extends React.Component {
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}>
-          <Card
-            title='New Catalogue Arrived'
-            titleStyle={{color: '#2e78b7'}}>
-            <Text style={{marginBottom: 10}}>
-              A new Woolworths catalogue has been delivered to your letterbox. 
-              It has a QR code you can scan to get free samples, until out of stock or by 31/8/2017.
-            </Text>
-            <TouchableOpacity
-              onPress={this._handleViewDetails}>
-              <Text style={{fontSize: 14, color: '#2e78b7'}}>
-                Scan Now
-              </Text>
-            </TouchableOpacity>
-          </Card>
 
-          <Card
-            title='New Catalogue Arrived'
-            titleStyle={{color: '#2e78b7'}}>
-            <Text style={{marginBottom: 10}}>
-              A new Coles catalogue has been delivered to your letterbox. 
-              It has a QR code you can scan to join an event with a chance to win a free gift.
-            </Text>
-            <TouchableOpacity
-              onPress={this._handleViewDetails}>
-              <Text style={{fontSize: 14, color: '#2e78b7'}}>
-                Scan Now
-              </Text>
-            </TouchableOpacity>
-          </Card>
-
-          <Card
-            title='Free Gift Won'
-            titleStyle={{color: '#2e78b7'}}>
-            <Text style={{marginBottom: 10}}>
-              You've won a free gift for the last event you've joined. 
-            </Text>
-            <TouchableOpacity
-              onPress={this._handleViewDetails}>
-              <Text style={{fontSize: 14, color: '#2e78b7'}}>
-                View Details
-              </Text>
-            </TouchableOpacity>
-          </Card>
+          {this.state.msgs.map((msg, i) => {
+            return (
+              <Card key={msg.id}
+                      title={msg.title}
+                      titleStyle={{color: '#2e78b7'}}>
+                <Text style={{marginBottom: 10}}>
+                  {msg.body}
+                </Text>
+              </Card>
+            );
+          })}
 
         </ScrollView>
 

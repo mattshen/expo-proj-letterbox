@@ -23,26 +23,23 @@ export default class EventsScreen extends React.Component {
         />
         <ScrollView style={styles.container}>
             <Card
-              title='Coles Catalogue Event | [ REGISTERED ]' 
-              titleStyle={{color: '#2e78b7'}}>
+              title='Coles Catalogue Event | [ REGISTERED ]' titleStyle={{color: '#2e78b7'}}>
               <Text style={{marginBottom: 10}}>
-                You've registered for this event. The result will be known on 31/8/2017.
+                QR Code Event. Expires on 31/8/2017.
               </Text>
             </Card>
 
             <Card
-              title='ALDI Catalogue Event | [ NOT WON] '
-              titleStyle={{color: '#2e78b7'}}>
+              title='ALDI Catalogue Event | [ NOT WON] ' titleStyle={{color: '#2e78b7'}}>
               <Text style={{marginBottom: 10}}>
-                Unfortunately, you didn't won this time. Please keep on eye on the future catalogues.
+                QR Code Event. Expired.
               </Text>
             </Card>
 
             <Card
-              title='ALDI Catalogue Event | [ WON ]'
-              titleStyle={{color: '#2e78b7'}}>
+              title='ALDI Catalogue Event | [ WON ]' titleStyle={{color: '#2e78b7'}}>
               <Text style={{marginBottom: 10}}>
-                Congratulations, you've won a free gift.
+                QR Event. Expired
               </Text>
               <TouchableOpacity
                 onPress={this._handleHelpPress}>

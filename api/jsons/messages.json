@@ -1,0 +1,17 @@
+{
+	"table": "messages",
+	"records": [{
+		"title": "New Woolworths Catalogue Arrived",
+		"body": "A new Woolworths catalogue has been delivered to your letterbox. It has a QR code you can scan to get free samples, until out of stock or by 31/8/2017.",
+		"type": "CATALOGUE_EVENT"
+	},{
+		"title": "New Coles Catalogue Arrived",
+		"body": "A new Coles catalogue has been delivered to your letterbox. It has a QR code you can scan to join an event with a chance to win a free gift.",
+		"type": "CATALOGUE_EVENT"
+	},
+	{
+		"title": "Free Gift Won",
+		"body": "You've won a free gift for the last event you've joined. ",
+		"type": "GIFT_WON"
+	}]
+}
