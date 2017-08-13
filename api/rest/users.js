@@ -4,7 +4,6 @@ import apiUtils from '../apiUtils';
 import cache from '../../cache';
 
 const login = (username, password) => {
-  console.log('Basic ' + base64.encode(`${username}:${password}`));
   cache.setAuth('Basic ' + base64.encode(`${username}:${password}`))
   const header = {
     query: 'select 1',
