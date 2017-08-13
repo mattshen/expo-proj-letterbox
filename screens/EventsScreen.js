@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import { ScrollView, View, StyleSheet, Text, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
 import { Card, ListItem, Button } from 'react-native-elements'
 
@@ -11,12 +11,23 @@ export default class EventsScreen extends React.Component {
   };
 
   state = {
+    refreshing: false,
     registrations: [],
   };
 
   componentDidMount () {
+    this._fetchData();
+  }
+
+  _fetchData = () => {
     apis.eventRegistrations.findAllRegistrations().then(res => {
-      if (res.success) {
+      
+      this.setState({
+        ...this.state,
+        refreshing: false
+      });
+
+      if (res && res.success) {
         this.setState({
           ...this.state,
           registrations: res.results,
@@ -25,10 +36,15 @@ export default class EventsScreen extends React.Component {
         Alert.alert('Something went wrong!');
       }
     });
-  }
+  };
   
   _navToQRScan = () => {
     this.props.navigation.navigate('QRScan');
+  }
+
+  _onRefresh = () => {
+    this.setState({refreshing: true});
+    this._fetchData();
   }
 
   render() {
@@ -40,7 +56,15 @@ export default class EventsScreen extends React.Component {
           title='Scan QR Code' 
           onPress={this._navToQRScan}
         />
-        <ScrollView style={styles.container}>
+        <ScrollView
+          style={styles.container}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }
+        >
 
             {this.state.registrations.map((reg, i) => {
               const title = `${reg.title} | ${reg.status}`;

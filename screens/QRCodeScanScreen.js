@@ -43,7 +43,7 @@ export default class QRCodeScanScreen extends Component {
 
     apis.eventRegistrations.registerEvent(1, data.eventId) //hardcode user id to 1
       .then(res => {
-        if (res.success) {
+        if (res && res.success) {
           this._goBack();
         } else {
           Alert.alert('Registration Failed, try again!');

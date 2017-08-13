@@ -1,4 +1,4 @@
-const endpoint = "http://192.168.0.7:3000";
+const endpoint = "https://api.mazeforce.com/lb";
 
 export default {
   endpoint,

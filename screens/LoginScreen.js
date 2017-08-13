@@ -1,60 +1,79 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Button, Alert } from 'react-native';
-import { Constants, Google } from 'expo';
+import { View, StyleSheet, Alert, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import { Constants } from 'expo';
+import { FormLabel, FormInput, Button, Text, Divider} from 'react-native-elements'
+
+import apis from '../api/apis';
+import Layout from '../constants/Layout';
 
 export default class LoginScreen extends Component {
 
-  _navToMain = () => {
-    this.props.navigation.navigate('Main');
+  state = {
+    username: '',
+    password: '',
+    logining: false,
   }
 
-  _handleGoogleLogin = async () => {
-    try {
-      const { type, user } = await Google.logInAsync({
-        androidStandaloneAppClientId: '<ANDROID_CLIENT_ID>',
-        iosStandaloneAppClientId: '<IOS_CLIENT_ID>',
-        androidClientId: '603386649315-9rbv8vmv2vvftetfbvlrbufcps1fajqf.apps.googleusercontent.com',
-        iosClientId: '603386649315-vp4revvrcgrcjme51ebuhbkbspl048l9.apps.googleusercontent.com',
-        scopes: ['profile', 'email']
+  _login = () => {
+    this.setState({
+      ...this.state,
+      logining: true,
+    });
+    if (this.state.username && this.state.password) {
+      apis.users.login(this.state.username, this.state.password)
+      .then(res => {
+        this.setState({
+          ...this.state,
+          logining: false,
+        });
+        if (res && res.success) {
+          this.props.navigation.navigate('Main');
+        } else {
+          Alert.alert('Login failed');
+        }
+      })
+    } else {
+      Alert.alert('Both username and password are required');
+      this.setState({
+        ...this.state,
+        logining: false,
       });
-
-      switch (type) {
-        case 'success': {
-          Alert.alert(
-            'Logged in!',
-            `Hi ${user.name}!`,
-          );
-          this._navToMain();
-          break;
-        }
-        case 'cancel': {
-          Alert.alert(
-            'Cancelled!',
-            'Login was cancelled!',
-          );
-          break;
-        }
-        default: {
-          Alert.alert(
-            'Oops!',
-            'Login failed!',
-          );
-        }
-      }
-    } catch (e) {
-      Alert.alert(
-        'Oops!',
-        'Login failed!',
-      );
     }
+  };
+
+  _navToMain = () => {
+    this.props.navigation.navigate('Main');
   };
 
   render() {
     return (
-      <View style={styles.container}>
-        <Button title="Login with Google" onPress={this._handleGoogleLogin} />
-        <Button title="Goto Main" onPress={this._navToMain} />
-      </View>
+      <KeyboardAvoidingView style={styles.container} behavior={'height'}>
+        <Text h3 style={{color : '#03A9F4'}}>Letterbox Surprise</Text>
+        <View style={{width: Layout.window.width - 20, paddingBottom: 30,}}>
+          <FormLabel>Username</FormLabel>
+          <FormInput autoCapitalize={'none'} autoCorrect={false} 
+            onChangeText={text => this.setState({...this.state, username: text})}
+          />
+          <FormLabel>Password</FormLabel>
+          <FormInput secureTextEntry={true} 
+            onChangeText={text => this.setState({...this.state, password: text})}
+          />
+                    
+          <Divider style={{backgroundColor: '#ecf0f1', margin: 10}} />
+          { this.state.logining && 
+            <ActivityIndicator/>
+          }
+          { !this.state.logining && 
+            <Button
+              raised
+              backgroundColor='#03A9F4'
+              buttonStyle={{borderRadius: 5, marginLeft: 0, marginRight: 0, marginBottom: 0}}
+              title='Login In' 
+              onPress={this._login}
+              />
+          }
+        </View>
+      </KeyboardAvoidingView>
     );
   }
 }
